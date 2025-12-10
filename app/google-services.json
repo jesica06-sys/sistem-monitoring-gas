@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "111673241902",
+    "firebase_url": "https://monitoring-udara-d1a00-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "monitoring-udara-d1a00",
+    "storage_bucket": "monitoring-udara-d1a00.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111673241902:android:2467a5b047f1349e964abf",
+        "android_client_info": {
+          "package_name": "com.example.sistemmonitoringgas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCavPiMju2ZfsnUJaLlm_Pcm9guBohBHRw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
