@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="128dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Tabung gas (Hijau) -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M352,128h-16v-48c0,-26.51 -21.49,-48 -48,-48h-64c-26.51,0 -48,21.49 -48,48v48h-16c-35.35,0 -64,28.65 -64,64v224c0,35.35 28.65,64 64,64h192c35.35,0 64,-28.65 64,-64v-224c0,-35.35 -28.65,-64 -64,-64zM208,80c0,-8.84 7.16,-16 16,-16h64c8.84,0 16,7.16 16,16v48h-96v-48zM384,416c0,17.67 -14.33,32 -32,32h-192c-17.67,0 -32,-14.33 -32,-32v-224c0,-17.67 14.33,-32 32,-32h192c17.67,0 32,14.33 32,32v224z"/>
+
+    <!-- Indikator tekanan -->
+    <path
+        android:fillColor="#1B5E20"
+        android:pathData="M256,192c-44.18,0 -80,35.82 -80,80s35.82,80 80,80 80,-35.82 80,-80 -35.82,-80 -80,-80zM256,320c-26.51,0 -48,-21.49 -48,-48s21.49,-48 48,-48 48,21.49 48,48 -21.49,48 -48,48z"/>
+</vector>

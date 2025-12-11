@@ -1,6 +1,260 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F172A">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- ====== JUDUL ====== -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Monitoring Udara Dan Kontrol Kipas"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="15dp" />
+
+
+        <!-- ====== CONTAINER CARD ATAS ====== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:weightSum="3">
+
+            <!-- CARD GAS -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_margin="6dp"
+                android:background="@drawable/card_dark">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gas (Analog)"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvGasValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2638"
+                    android:textSize="28sp"
+                    android:textColor="#4FC3F7"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/tvGasStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status: Aman"
+                    android:textColor="#A3E635"
+                    android:textSize="12sp"
+                    android:layout_marginTop="6dp" />
+
+            </LinearLayout>
+
+
+            <!-- CARD SUHU -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_margin="6dp"
+                android:background="@drawable/card_dark">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Suhu (°C)"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvTempValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="29.3"
+                    android:textSize="28sp"
+                    android:textColor="#4FC3F7"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/tvHumidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kelembapan: 53%"
+                    android:textColor="#B0BEC5"
+                    android:textSize="12sp"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+
+            <!-- CARD KIPAS -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_margin="6dp"
+                android:background="@drawable/card_dark">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kipas Dinamo"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvFanMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="manual"
+                    android:textSize="20sp"
+                    android:textColor="#4FC3F7"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/tvFanStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status: OFF"
+                    android:textColor="#FF5B5B"
+                    android:textSize="12sp"
+                    android:layout_marginTop="6dp" />
+
+                <!-- Tombol -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/btnOn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="40dp"
+                        android:text="Nyalakan"
+                        android:textSize="14sp"
+                        android:backgroundTint="#2196F3"
+                        android:textColor="#FFFFFF" />
+
+                    <Button
+                        android:id="@+id/btnOff"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:text="Matikan"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="8dp"
+                        android:backgroundTint="#455A64"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <!-- ====== LOG REALTIME ====== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/card_dark">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Log Realtime"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:id="@+id/tvLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Menunggu data..."
+                android:textColor="#B0BEC5"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+
+        <!-- ====== KONTROL MANUAL / AUTO ====== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/card_dark">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kontrol Mode Kipas"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btnAuto"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="45dp"
+                    android:text="Auto"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#1E88E5"/>
+
+                <Button
+                    android:id="@+id/btnManual"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="45dp"
+                    android:text="Manual"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#546E7A"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 </ScrollView>
