@@ -159,7 +159,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="40dp"
-                        android:text="Nyalakan"
+                        android:text="N"
                         android:textSize="14sp"
                         android:backgroundTint="#2196F3"
                         android:textColor="#FFFFFF" />
@@ -169,7 +169,7 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_weight="1"
-                        android:text="Matikan"
+                        android:text="M"
                         android:textSize="14sp"
                         android:layout_marginLeft="8dp"
                         android:backgroundTint="#455A64"
