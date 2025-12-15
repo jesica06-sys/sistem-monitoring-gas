@@ -16,7 +16,7 @@ class DetailActivity : AppCompatActivity() {
 
         // Inisialisasi Firebase
         db = FirebaseDatabase.getInstance()
-        sensorRef = db.getReference("sensor")
+        sensorRef = db.getReference("alat1") // FIX 1: Ubah dari "sensor" ke "alat1"
 
         // Ambil komponen
         val tvGas = findViewById<TextView>(R.id.tvGas)
@@ -28,14 +28,18 @@ class DetailActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 val gasValue = snapshot.child("gas").getValue(Int::class.java) ?: 0
-                val waktuUpdate = snapshot.child("update").getValue(String::class.java) ?: "-"
+                // FIX 2: Hapus referensi ke "update" karena Arduino tidak mengirimkannya, 
+                // dan ganti dengan placeholder
+                val waktuUpdate = "Real-time"
 
-                tvGas.text = "$gasValue %"
+                // Tampilkan nilai analog, dan gunakan logika status yang sama dengan MainActivity
+                tvGas.text = "$gasValue (Analog)"
                 tvUpdated.text = "Update: $waktuUpdate"
 
+                // Gunakan batas analog untuk penentuan status yang lebih konsisten
                 val status = when {
-                    gasValue >= 80 -> "BAHAYA!"
-                    gasValue >= 50 -> "WASPADA"
+                    gasValue >= 3000 -> "BAHAYA!"
+                    gasValue >= 2000 -> "WASPADA"
                     else -> "AMAN"
                 }
 
