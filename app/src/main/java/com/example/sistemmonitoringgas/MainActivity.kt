@@ -1,45 +1,59 @@
 package com.example.sistemmonitoringgas
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.database.*
 
 class MainActivity : AppCompatActivity() {
 
-    // Firebase
+    // =============================
+    // Firebase Reference
+    // =============================
     private lateinit var db: FirebaseDatabase
     private lateinit var sensorRef: DatabaseReference
     private lateinit var fanRef: DatabaseReference
     private lateinit var modeRef: DatabaseReference
-    // Tambahkan variabel baru untuk menulis status kontrol manual kipas
-    private lateinit var fanControlWriteRef: DatabaseReference // Tambahan: digunakan untuk menulis status manual ON/OFF
+    private lateinit var fanControlWriteRef: DatabaseReference
+
+    // =============================
+    // Mode (AUTO / MANUAL)
+    // =============================
+    private var currentMode = "manual"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        // Permission notifikasi (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissions(
                 arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
                 100
             )
         }
 
-
         // =============================
-        // Firebase
+        // Firebase Init
         // =============================
         db = FirebaseDatabase.getInstance()
-        sensorRef = db.getReference("alat1") // FIX 1: Ubah dari "sensor" ke "alat1"
-        fanRef = db.getReference("alat1/kipas") // FIX 2: Ubah dari "kipas" ke "alat1/kipas" (Untuk membaca Status ON/OFF)
-        modeRef = db.getReference("alat1/kontrol/mode") // FIX 3: Ubah dari "mode" ke "alat1/kontrol/mode" (Untuk membaca/menulis Mode)
-        fanControlWriteRef = db.getReference("alat1/kontrol/on") // FIX 4: Referensi untuk menulis status manual (true/false)
+        sensorRef = db.getReference("alat1")
+        fanRef = db.getReference("alat1/kipas")
+        modeRef = db.getReference("alat1/kontrol/mode")
+        fanControlWriteRef = db.getReference("alat1/kontrol/fan")
 
         // =============================
-        // Ambil View dari XML
+        // View Init
         // =============================
         val tvGasValue = findViewById<TextView>(R.id.tvGasValue)
         val tvGasStatus = findViewById<TextView>(R.id.tvGasStatus)
@@ -59,24 +73,45 @@ class MainActivity : AppCompatActivity() {
         val tvLog = findViewById<TextView>(R.id.tvLog)
 
         // =============================
-        // Listener Realtime Sensor (Membaca dari /alat1)
+        // MODE LISTENER
+        // =============================
+        modeRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                currentMode = snapshot.getValue(String::class.java) ?: "manual"
+                tvFanMode.text = currentMode
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
+        // =============================
+        // SENSOR LISTENER
         // =============================
         sensorRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
-                // GAS (Mengambil child dari /alat1/)
                 val gasValue = snapshot.child("gas").getValue(Int::class.java) ?: 0
                 tvGasValue.text = gasValue.toString()
 
                 val gasStatus = when {
-                    gasValue >= 3000 -> "BAHAYA!"
-                    gasValue >= 2000 -> "WASPADA"
+                    gasValue >= 3000 -> {
+                        showGasNotification(
+                            "🚨 BAHAYA GAS!",
+                            "Gas sangat tinggi ($gasValue). Segera evakuasi!"
+                        )
+                        "BAHAYA!"
+                    }
+                    gasValue >= 2000 -> {
+                        showGasNotification(
+                            "⚠️ WASPADA GAS",
+                            "Gas terdeteksi ($gasValue). Periksa ruangan!"
+                        )
+                        "WASPADA"
+                    }
                     else -> "AMAN"
                 }
 
                 tvGasStatus.text = "Status: $gasStatus"
-
-                // Warna status
                 tvGasStatus.setTextColor(
                     when (gasStatus) {
                         "BAHAYA!" -> Color.RED
@@ -85,14 +120,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 )
 
-                // SUHU & KELEMBAPAN (Mengambil child dari /alat1/)
                 val suhu = snapshot.child("suhu").getValue(Double::class.java) ?: 0.0
                 val lembab = snapshot.child("kelembapan").getValue(Int::class.java) ?: 0
 
-                tvTempValue.text = suhu.toString()
+                tvTempValue.text = "$suhu °C"
                 tvHumidity.text = "Kelembapan: $lembab%"
 
-                // Log realtime
                 tvLog.text = "Gas: $gasValue | Suhu: $suhu °C | Lembap: $lembab%"
             }
 
@@ -100,11 +133,10 @@ class MainActivity : AppCompatActivity() {
         })
 
         // =============================
-        // Listener status kipas (Membaca String "ON"/"OFF" dari /alat1/kipas)
+        // STATUS KIPAS
         // =============================
-        fanRef.addValueEventListener(object : ValueEventListener { // fanRef kini menunjuk ke /alat1/kipas
+        fanRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                // FIX 5: Mengambil nilai sebagai String, karena Arduino menulis String "ON" atau "OFF"
                 val status = snapshot.getValue(String::class.java) ?: "OFF"
                 tvFanStatus.text = "Status: $status"
             }
@@ -113,43 +145,71 @@ class MainActivity : AppCompatActivity() {
         })
 
         // =============================
-        // Mode kontrol kipas (Membaca String dari /alat1/kontrol/mode)
-        // =============================
-        modeRef.addValueEventListener(object : ValueEventListener { // modeRef kini menunjuk ke /alat1/kontrol/mode
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val mode = snapshot.getValue(String::class.java) ?: "manual"
-                tvFanMode.text = mode
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-
-        // =============================
-        // Tombol ON / OFF Manual (Menulis boolean ke /alat1/kontrol/on)
+        // MANUAL ON / OFF
         // =============================
         btnOn.setOnClickListener {
-            fanControlWriteRef.setValue(true) // FIX 6: Menggunakan fanControlWriteRef untuk menulis boolean ke /alat1/kontrol/on
-            tvLog.text = "Kipas dinyalakan (manual)"
+            if (currentMode == "manual") {
+                fanControlWriteRef.setValue(true)
+                tvLog.text = "MANUAL: Kipas ON"
+            }
         }
 
         btnOff.setOnClickListener {
-            fanControlWriteRef.setValue(false) // FIX 6: Menggunakan fanControlWriteRef
-            tvLog.text = "Kipas dimatikan (manual)"
+            if (currentMode == "manual") {
+                fanControlWriteRef.setValue(false)
+                tvLog.text = "MANUAL: Kipas OFF"
+            }
         }
 
         // =============================
-        // Mode AUTO / MANUAL (Menulis String ke /alat1/kontrol/mode)
+        // UBAH MODE
         // =============================
         btnAuto.setOnClickListener {
             modeRef.setValue("auto")
-            tvFanMode.text = "auto"
-            tvLog.text = "Mode diubah ke AUTO"
+            tvLog.text = "Mode AUTO diaktifkan"
         }
 
         btnManual.setOnClickListener {
             modeRef.setValue("manual")
-            tvFanMode.text = "manual"
-            tvLog.text = "Mode diubah ke MANUAL"
+            tvLog.text = "Mode MANUAL diaktifkan"
         }
+    }
+
+    // =============================
+    // NOTIFIKASI GAS
+    // =============================
+    private fun showGasNotification(title: String, message: String) {
+
+        val channelId = "GAS_ALERT"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Peringatan Gas",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val manager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
+        }
+
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
+
+        NotificationManagerCompat.from(this).notify(1, notification)
     }
 }
