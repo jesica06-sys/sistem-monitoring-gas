@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         sensorRef = db.getReference("alat1")
         fanRef = db.getReference("alat1/kipas")
         modeRef = db.getReference("alat1/kontrol/mode")
-        fanControlWriteRef = db.getReference("alat1/kontrol/fan")
+        fanControlWriteRef = db.getReference("alat1/kontrol/on")
 
         // =============================
         // View Init
